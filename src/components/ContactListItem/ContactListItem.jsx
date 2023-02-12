@@ -1,4 +1,3 @@
-import React from 'react';
 import PropTypes from 'prop-types';
 import {
   ListItem,
@@ -9,14 +8,8 @@ import {
 } from './ContactListItem.styled';
 import { TiUser } from 'react-icons/ti';
 
-const ContactListItem = ({
-  id,
-  name,
-  number,
-  deleteContact,
-}) => {
+const ContactListItem = ({ id, name, number, deleteContact }) => {
   return (
-    
     <UserWrapper key={id}>
       <Wrapper>
         <TiUser size={25} color={'darkpurple'} />
@@ -28,7 +21,7 @@ const ContactListItem = ({
       </NumberWrapper>
     </UserWrapper>
   );
-}
+};
 
 ContactListItem.propTypes = {
   name: PropTypes.string.isRequired,

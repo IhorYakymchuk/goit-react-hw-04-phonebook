@@ -1,4 +1,3 @@
-import React from 'react';
 import PropTypes from 'prop-types';
 import { InputLabel, FilterInput } from './Filter.styled';
 
@@ -14,7 +13,7 @@ const Filter = ({ filter, onChange }) => {
       />
     </InputLabel>
   );
-}
+};
 
 Filter.propTypes = {
   filter: PropTypes.string.isRequired,

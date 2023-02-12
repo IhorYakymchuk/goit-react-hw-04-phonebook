@@ -1,4 +1,3 @@
-import React from 'react';
 import PropTypes from 'prop-types';
 import ContactListItem from 'components/ContactListItem';
 import { List } from './ContactList.styled';
@@ -6,18 +5,19 @@ import { List } from './ContactList.styled';
 const ContactList = ({ contacts, deleteContact }) => {
   return (
     <List>
-      {contacts.map(({ name, number, id }) => (
-        <ContactListItem
-          key={id}
-          id={id}
-          name={name}
-          number={number}
-          deleteContact={deleteContact}
-        />
-      ))}
+      {contacts.length !== 0 &&
+        contacts.map(({ name, number, id }) => (
+          <ContactListItem
+            key={id}
+            id={id}
+            name={name}
+            number={number}
+            deleteContact={deleteContact}
+          />
+        ))}
     </List>
   );
-}
+};
 
 ContactList.propTypes = {
   contacts: PropTypes.arrayOf(

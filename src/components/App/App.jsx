@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import { useState, useEffect } from 'react';
 import { nanoid } from 'nanoid';
 
 import ContactList from 'components/ContactList';
@@ -6,92 +6,43 @@ import ContactForm from 'components/ContactForm';
 import Filter from 'components/Filter';
 import { Wrapper, Title, ContactsWrapper } from './App.styled';
 
-export default class App extends Component {
-  state = {
-    contacts: [
-      { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
-      { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
-      { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
-      { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
-    ],
-    filter: '',
-  };
+const initialsContacts = () =>
+  JSON.parse(localStorage.getItem('saved_contacts')) ?? [];
 
-  componentDidMount() {
-    const savedContacts = JSON.parse(localStorage.getItem('saved_contacts'));
-    if (savedContacts) {
-      this.setState({ contacts: savedContacts });
-    }
-  }
+export default function App() {
+  const [contacts, setContacts] = useState(initialsContacts);
+  const [filterValue, setFilterValue] = useState('');
 
-  componentDidUpdate(_, prevState) {
-    const nextContacts = this.state.contacts;
-    const prevContacts = prevState.contacts;
+  useEffect(() => {
+    localStorage.setItem('saved_contacts', JSON.stringify(contacts));
+  }, [contacts]);
 
-    if (nextContacts !== prevContacts) {
-      localStorage.setItem('saved_contacts', JSON.stringify(nextContacts));
-    }
-  }
+  const formSubmitHandler = newContact =>
+    setContacts(prevState => [
+      ...prevState,
+      { id: nanoid(), name: newContact.name, number: newContact.number },
+    ]);
 
-  formSubmitHandler = ({ name, number }) => {
-    const contact = {
-      id: nanoid(),
-      name,
-      number,
-    };
-    const isExist = this.state.contacts.find(
-      input =>
-        input.name.toLowerCase() === contact.name.toLowerCase() ||
-        input.number === contact.number
-    );
-    if (isExist) {
-      alert(`${name} is already in contacts`);
-      return;
-    }
-    this.setState(({ contacts }) => ({
-      contacts: [contact, ...contacts],
-    }));
-  };
+  const handleFilterInputChange = event => setFilterValue(event.target.value);
 
-  handleFilterInputChange = event => {
-    const { value } = event.target;
-    this.setState({ filter: value });
-  };
+  const renderContacts = contacts
+    .filter(contact =>
+      contact.name.toLowerCase().includes(filterValue.toLowerCase())
+    )
+    .sort((a, b) => a.name.localeCompare(b.name));
 
-  renderContacts() {
-    const { contacts, filter } = this.state;
-    return contacts
-      .filter(contact =>
-        contact.name.toLowerCase().includes(filter.toLowerCase())
-      )
-      .sort((a, b) => a.name.localeCompare(b.name));
-  }
+  const deleteContact = id =>
+    setContacts(prevState => prevState.filter(contact => contact.id !== id));
 
-  deleteContact = id => {
-    this.setState(prevState => ({
-      contacts: prevState.contacts.filter(contact => contact.id !== id),
-    }));
-  };
-
-  render() {
-    const { contacts, filter } = this.state;
-    const renderContacts = this.renderContacts();
-    return (
-      <Wrapper>
-        <Title>Phonebook</Title>
-        <ContactForm
-          onSubmitForm={this.formSubmitHandler}
-          contacts={contacts}
-        />
-        <Title>Contacts:</Title>
-        <ContactsWrapper>
-          <Filter filter={filter} onChange={this.handleFilterInputChange} />
-          <ContactList
-            contacts={renderContacts}
-            deleteContact={this.deleteContact}
-          />
-        </ContactsWrapper>
-      </Wrapper>
-    );
-  }
+  return (
+    <Wrapper>
+      <Title>Phonebook</Title>
+      <ContactForm onSubmitForm={formSubmitHandler} contacts={contacts} />
+      <Title>Contacts:</Title>
+      <ContactsWrapper>
+        <Filter filter={filterValue} onChange={handleFilterInputChange} />
+        <ContactList contacts={renderContacts} deleteContact={deleteContact} />
+      </ContactsWrapper>
+    </Wrapper>
+  );
 }

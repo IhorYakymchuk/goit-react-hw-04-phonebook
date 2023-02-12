@@ -1,4 +1,3 @@
-import React from 'react';
 import PropTypes from 'prop-types';
 import { Formik, ErrorMessage } from 'formik';
 import * as yup from 'yup';
@@ -21,8 +20,13 @@ const FormSchema = yup.object().shape({
   number: yup.string().min(7).max(13).required(),
 });
 
-const ContactForm = ({ onSubmitForm }) => {
+const ContactForm = ({ onSubmitForm, contacts }) => {
   const handleSubmitForm = (values, { resetForm }) => {
+    const existingUsers = contacts.map(contact => contact.name);
+    if (existingUsers.includes(values.name)) {
+      alert(`${values.name} is already in contacts`);
+      return;
+    }
     onSubmitForm(values);
     resetForm();
   };
