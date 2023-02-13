@@ -20,13 +20,8 @@ const FormSchema = yup.object().shape({
   number: yup.string().min(7).max(13).required(),
 });
 
-const ContactForm = ({ onSubmitForm, contacts }) => {
+const ContactForm = ({ onSubmitForm }) => {
   const handleSubmitForm = (values, { resetForm }) => {
-    const existingUsers = contacts.map(contact => contact.name);
-    if (existingUsers.includes(values.name)) {
-      alert(`${values.name} is already in contacts`);
-      return;
-    }
     onSubmitForm(values);
     resetForm();
   };

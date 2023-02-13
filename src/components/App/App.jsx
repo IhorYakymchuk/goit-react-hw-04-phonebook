@@ -17,11 +17,23 @@ export default function App() {
     localStorage.setItem('saved_contacts', JSON.stringify(contacts));
   }, [contacts]);
 
-  const formSubmitHandler = newContact =>
-    setContacts(prevState => [
-      ...prevState,
-      { id: nanoid(), name: newContact.name, number: newContact.number },
-    ]);
+  const formSubmitHandler = ({ name, number }) => {
+    const contact = {
+      id: nanoid(),
+      name,
+      number,
+    };
+    const isExist = contacts.find(
+      input =>
+        input.name.toLowerCase() === contact.name.toLowerCase() ||
+        input.number === contact.number
+    );
+    if (isExist) {
+      alert(`${name} is already in contacts`);
+      return;
+    }
+    setContacts([contact, ...contacts]);
+  };
 
   const handleFilterInputChange = event => setFilterValue(event.target.value);
 
